@@ -1,0 +1,74 @@
+create table flights(fno integer(5) primary key,origin varchar(20),destination 
+      varchar(10),distance integer(5),departs varchar(20),arrives varchar(20),price integer(8));
+
+create table aircraft(aid integer(5) primary key,airname varchar(10),crange integer(6));
+
+create table employe(eid integer(5) primary key,ename varchar(10),salary integer(6));
+
+create table certi(eid integer(5) references employe(eid) on delete cascade,
+             aid integer(5) references aircraft(aid) on delete cascade);
+
+insert into flights values(1000,'usa','chicago',2500,'12-APR-13','12-MAY-13',25000);
+insert into flights values(1001,'japan','china',1500,'10-JAN-13','10-FEB-13',20000);
+insert into flights values(1002,'mangalore','bangalore',400,'05-MAR-13','05-JUN-13',5000);
+insert into flights values(1003,'bangalore','frankfurt',500,'10-SEP-13','10-OCT-13',70000);
+insert into flights values(1004,'bangalore','delhi',250,'10-NOV-13','10-DEC-13',4000);
+
+insert into aircraft values(1,'boeing',990);
+insert into aircraft values(2,'airbus',991);
+insert into aircraft values(3,'jetair',992);
+insert into aircraft values(4,'jaguar',993);
+insert into aircraft values(5,'kiran',994);
+
+insert into employe values(100,'sony',60000);
+insert into employe values(101,'ravi',65000);
+insert into employe values(102,'rama',90000);
+insert into employe values(103,'latha',85000);
+insert into employe values(104,'jaya',80000);
+
+insert into certi values(100,1);
+insert into certi values(101,2);
+insert into certi values(102,3);
+insert into certi values(103,4);
+insert into certi values(103,5);
+
+
+select a.airname 
+from aircraft a,certi c,employe e 
+where a.aid=c.aid and c.eid=e.eid and e.salary in(select e.salary 
+from employe e where e.salary>80000);
+
+
+select c.eid,max(a.crange) 
+from certi c,aircraft a,employe e   
+where a.aid=c.aid and c.eid=e.eid 
+group by c.eid 
+having count(c.eid)>=2;
+
+select distinct(e.ename) 
+from employe e, aircraft a,certi c, flights f
+where e.eid=c.eid and a.aid=c.aid and e.salary<(select min(f.price) 
+from flights f where f.origin='bangalore' and f.destination='frankfurt');
+
+
+select a.airname,avg(e.salary) 
+from aircraft a,employe e,certi c 
+where a.aid=c.aid and c.eid=e.eid and a.crange>992
+group by a.crange;
+
+
+select ename 
+from employe e,certi c,aircraft a 
+where e.eid=c.eid and c.aid=a.aid and a.airname='boeing';
+
+select a.aid 
+from aircraft a 
+where a.crange>(select min(f.distance) 
+from flights f 
+where f.origin='bangalore' and f.destination='DELHI');
+
+
+
+
+
+

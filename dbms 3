@@ -1,0 +1,65 @@
+create table student(regno varchar(20) primary key,name varchar(20),major varchar(20),rdate varchar(10));
+
+create table course(course integer(20) primary key,cname varchar(20),dept varchar(20));    
+     
+create table enroll(regno varchar(20) references student100(regno),course integer(20) references course100(course),sem integer(20) primary key,marks integer(20));
+
+create table text(book_isbn integer(20) primary key,book_title varchar(20),publisher varchar(20),author varchar(20));
+
+create table book_ad(course integer(20) references course100(course),sem integer(20) references enroll100(sem),book_isbn integer(20) references text100(book_isbn));
+
+
+insert into student values('1by11cs001','abhi','computerNetworks','12-JAN-13');
+insert into student values('1by11cs002','akshay','ad-networks','15-FEB-13');
+insert into student values('1by11cs003','bharath','powerelectroincs','16-MAR-13');
+insert into student values('1by11cs004','danush','networksecurity','17-APR-13');
+insert into student values('1by11cs005','amruth','cloudcomputing','18-MAY-13');
+
+insert into course values(10,'be','cse');
+insert into course values(11,'mca','ece');
+insert into course values(12,'bca','mech');
+insert into course values(13,'b.tech','cse');
+insert into course values(14,'m.tec','tce');
+
+insert into enroll values('1by11cs001',10,1,90);
+insert into enroll values('1by11cs002',11,2,97);
+insert into enroll values('1by11cs003',12,3,89);
+insert into enroll values('1by11cs004',13,4,99);
+insert into enroll values('1by11cs005',14,5,100);
+
+insert into text values(123,'soft engg','prism','sommerville');
+insert into text values(234,'sys software','sai','leland beck');
+insert into text values(345,'dbms','prism','navathe');
+insert into text values(456,'fafl','padma','ullman');
+insert into text values(567,'comp network','subas','forouzan');
+
+insert into book_ad values(10,1,123);
+insert into book_ad values(11,2,234);
+insert into book_ad values(12,3,345);
+insert into book_ad values(13,4,456);
+insert into book_ad values(14,5,567);
+
+
+ insert into text values(1007,'Java','Tata','Patricton');
+ insert into book_ad values(002,4,1007);
+ select * from text;
+
+
+ select c.course,b.book_isbn,t.book_title 
+ from text t,book_ad b,course c 
+ where t.book_isbn=b.book_isbn and b.course=c.course and c.dept='cse' and
+ b.course in(select course 
+ from book_ad 
+ group by course 
+ having count(*)>0) order by course;
+
+
+ select distinct(dept) 
+ from course 
+ where course in(select course 
+ from book_ad 
+ where book_isbn in(select book_isbn 
+ from text 
+ where publisher='prism'));
+
+

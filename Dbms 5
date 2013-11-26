@@ -1,0 +1,68 @@
+create table branch(bname varchar(20), primary key(bname),bcity varchar(20), assets decimal(20,2));
+
+create table accounts(accno integer(10) primary key, bname varchar(20), foreign key(bname) references branch(bname), bal decimal(10,2));
+
+create table customer(cname varchar(20) primary key, cstreet varchar(20),ccity varchar(20));
+
+create table depositor (cname varchar(20) references customer(cname), accno integer(10) references account(accno));
+
+create table loan(loan_no integer(10) primary key, bname varchar(20) references branch(bname), amt decimal(10,2));
+
+create table borrower(cname varchar(20) references customer(cname), loan_no integer(20) references loan(loan_no));
+
+
+
+insert into branch values('jpnagar','blore',123456);
+insert into branch values('jayanagar','blore',789012);
+insert into branch values('majestic','blore',345678);
+insert into branch values('mg road','kolkata',123456);
+insert into branch values('laketown','kolkata',789012);
+
+insert into accounts values(1001,'jpnagar',20000);
+insert into accounts values(1002,'jpnagar',10000);
+insert into accounts values(1003,'jpnagar',5000);
+insert into accounts values(1004,'jayanagar',20000);
+insert into accounts values(1005,'mg road',10000);
+insert into accounts values(1006,'laketown',3000);
+insert into accounts values(1007,'majestic',15000);
+
+insert into customer values('saket','5thmain','bangalore');
+insert into customer values('sameer','6thmain','banaglore');
+insert into customer values('subh','mg','kolkata');
+insert into customer values('vikas','9th main','bangalore');
+
+insert into depositor values('saket',1001);
+insert into depositor values('saket',1002);
+insert into depositor values('sameer',1003);
+insert into depositor values('sameer',1004);
+insert into depositor values('vikas',1007);
+
+insert into loan values(2001,'jpnagar',20000);
+insert into loan values(2002,'jayanagar',10000);
+insert into loan values(2003,'majestic',15000);
+
+insert into borrower values('saket',2001);
+insert into borrower values('sameer',2002);
+insert into borrower values('vikas',2003);
+
+select distinct(d.cname) 
+   from depositor d,accounts a 
+   where d.accno=a.accno and bname='jpnagar' 
+   group by d.cname
+   having count(d.accno)>=2;
+
+select distinct(d.cname) 
+   from depositor d,accounts a 
+   where 
+   d.accno=a.accno and bname in(select bname from branch where
+   bcity='blore');
+
+delete from accounts 
+   where bname in(select bname from branch where
+   bcity='blore');
+
+
+
+
+
+

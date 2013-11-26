@@ -1,0 +1,66 @@
+create table author(author_id integer(10) primary key,name varchar(10),city varchar(10),country varchar(10));
+
+create table publisher(publisher_id integer(10) primary key,name varchar(10),city varchar(10),country varchar(10));
+
+create table cat(cat_id integer(10) primary key,description varchar(10));
+
+create table catalog(book_id integer(10) primary key,title varchar(10),author_id integer(10) references author(author_id),
+       publisher_id integer(10) references publisher(publisher_id),
+       cat_id integer(10) references cat(cat_id),
+       year integer(4),price integer(10));
+
+create table order_details(order_no integer(10) primary key, book_id integer(10) references catalog(book_id),qty integer(10));
+
+insert into author values(1,'kanetkar','mumbai','india');
+insert into author values(2,'Balaguru','Chennai','india');
+insert into author values(3,'Sharma','delhi','india');
+insert into author values(4,'Gosling','New York','usa');
+insert into author values(5,'Lippman','New York','usa');
+
+insert into publisher values(101,'BPB','Mumbai','india');
+insert into publisher values(102,'EEE','Durban','southafr');
+insert into publisher values(103,'Khanna','delhi','india');
+insert into publisher values(104,'TMH','delhi','india');
+insert into publisher values(105,'OReilly','newyork','usa');
+
+insert into cat values(201,'computer');
+insert into cat values(202,'accounts');
+insert into cat values(203,'program');
+insert into cat values(204,'electronic');
+insert into cat values(205,'Electrical');
+
+insert into catalog values(1001,'Let Us C',1,101,203,2002,150);
+insert into catalog values(1002,'JAVA2',4,105,203,2004,340);
+insert into catalog values(1003,'Accounts',3,103,202,2000,180);
+insert into catalog values(1004,'J2EE',4,102,201,2005,400);
+insert into catalog values(1005,'C++ Primer',5,102,203,2002,300);
+insert into catalog values(1006,'C++',2,104,203,2000,200);
+
+insert into order_details values(5001,1001,100);
+insert into order_details values(5002,1002,200);
+insert into order_details values(5003,1004,150);
+insert into order_details values(5004,1003,100);
+insert into order_details values(5005,1002,100);
+insert into order_details values(5006,1001,100);
+
+select distinct(author_id),name,city,country 
+from author 
+where author_id in(select author_id 
+from catalog 
+where price>(select avg(price) 
+             from catalog) 
+             and year>2000 
+             group by author_id 
+             having count(*)>0);
+
+select a.name 
+from author a,catalog c 
+where a.author_id=c.author_id and c.book_id in(select book_id 
+from order_details 
+where qty in (select max(qty) 
+from order_details));
+
+update catalog set price=price+(price*0.1) 
+where publisher_id in(select
+publisher_id from publisher where name='eee');
+
