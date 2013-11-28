@@ -46,19 +46,19 @@ from enrolled1 e
 group by e.cname
 having count(*)>=5);
 
-select distinct(s.sname) .
-from student s,class c,enrolled1 e     
-where c.cname=e.cname and e.snum=s.snum and c.meets_at in
+select distinct(s.sname) 
+from student1 s,class1 c,enrolled1 e     
+where c.name=e.cname and e.snum=s.snum and c.meets_at in
    (select c.meets_at 
-    from class c 
+    from class1 c 
     group by c.meets_at 
     having count(*)>=2);
 
 select distinct(f.fname) 
-from faculty f,class c 
+from faculty1 f,class1 c 
 where f.fid=c.fid 
 and c.room in(select c.room 
-               from class c);
+               from class1 c);
 
 select distinct(f.fname) 
 from faculty1 f 
